@@ -13,28 +13,26 @@
 
 <canvas id="particles"></canvas>
 
-<!-- LOADING SCREEN -->
 <div id="loading-screen">
   <div class="loading-inner">
     <div class="loading-emoji">😄</div>
-    <p class="loading-text">It's just for fun. Please don't take anything seriously. 😄</p>
+    <p class="loading-text">Eita shudhu moja korar jonno. Keu serious bhabe niben na. 😄</p>
     <div class="loading-bar"><div class="loading-bar-fill"></div></div>
   </div>
 </div>
 
 <main id="app" hidden>
 
-  <!-- PAGE 1 : VERIFICATION -->
   <section class="page active" id="page-1">
     <h1 class="site-title">SiFUU <span class="wave-emoji">😀</span></h1>
 
     <div class="card glass">
-      <p class="eyebrow">Quick check</p>
-      <h2 class="page-heading">Verify you are Kutta or Manush 🙂</h2>
+      <p class="eyebrow">Taratari check koro</p>
+      <h2 class="page-heading">Nishchit koro tumi Kutta naki Manush 🙂</h2>
 
       <div class="verify-box">
         <button class="btn btn-primary" id="verify-btn">
-          <span class="btn-label">✅ Verify</span>
+          <span class="btn-label">✅ Verify Koro</span>
         </button>
       </div>
 
@@ -45,65 +43,61 @@
             <path class="check-mark" fill="none" d="M14 27l7 7 16-16"/>
           </svg>
         </div>
-        <p class="result-text">You're Manush... Maybe. 😂</p>
+        <p class="result-text">Tumi Manush... Hoitto! 😂</p>
       </div>
     </div>
   </section>
 
-  <!-- PAGE 2 : FUNNY QUESTION -->
   <section class="page" id="page-2">
     <div class="card glass">
-      <p class="eyebrow">Step 2 of 3</p>
-      <h2 class="page-heading">Complete the Question and Become Rich! 💰</h2>
-      <p class="question-text">Did your grandfather marry your grandmother?</p>
+      <p class="eyebrow">Dhap 2 / 3</p>
+      <h2 class="page-heading">Proshno uttor dao ar Dhori hou! 💰</h2>
+      <p class="question-text">Tumar dada ki tumar dadi ke biye korechilo?</p>
 
       <div class="options-row">
-        <button class="btn btn-option" data-answer="yes">Yes</button>
-        <button class="btn btn-option" data-answer="no">No</button>
+        <button class="btn btn-option" data-answer="yes">Hae</button>
+        <button class="btn btn-option" data-answer="no">Na</button>
       </div>
 
       <div class="result-box small" id="q2-result" hidden>
-        <p class="result-text">As expected... it was always going to be <strong>No</strong>. 😏</p>
+        <p class="result-text">Jani-i to... Uttar shobshomoy <strong>Na</strong>-i hobe. 😏</p>
       </div>
     </div>
   </section>
 
-  <!-- PAGE 3 : TRAP QUESTION -->
   <section class="page" id="page-3">
     <div class="card glass">
-      <p class="eyebrow">Step 3 of 3</p>
-      <h2 class="page-heading">If you call a puppy a puppy, will it be a sin?</h2>
+      <p class="eyebrow">Dhap 3 / 3</p>
+      <h2 class="page-heading">Kuttar bachha ke kuttar bachha bolle ki pap hobe?</h2>
 
       <div class="options-row trap-row" id="trap-row">
-        <button class="btn btn-option trap-btn" id="trap-btn-a" data-answer="no">No, it won't.</button>
-        <button class="btn btn-option trap-btn" id="trap-btn-b" data-answer="yes">Yes, it will.</button>
+        <button class="btn btn-option trap-btn" id="trap-btn-a" data-answer="no">Na, hobe na.</button>
+        <button class="btn btn-option trap-btn" id="trap-btn-b" data-answer="yes">Hae, hobe.</button>
       </div>
     </div>
 
-    <!-- WARNING POPUP -->
     <div class="popup-overlay" id="warning-popup" hidden>
       <div class="popup glass">
         <div class="popup-icon">⚠️</div>
-        <p class="popup-text">Everything was fine... Why did you start insulting? 😂</p>
+        <p class="popup-text">Shob thik-i chilo... Hothat gali dewa shuru korle keno? 😂</p>
       </div>
     </div>
   </section>
 
-  <!-- FINAL PAGE -->
   <section class="page" id="page-final">
     <canvas id="confetti-canvas"></canvas>
     <div class="card glass final-card">
       <div class="trophy">🎉</div>
-      <h2 class="final-title">Congratulations!</h2>
-      <p class="final-sub">You are now rich! 💸</p>
-      <p class="call-instruction">To receive your money, call:</p>
+      <h2 class="final-title">Ovinondon!</h2>
+      <p class="final-sub">Tumi ekhon Dhori lok! 💸</p>
+      <p class="call-instruction">Tumar taka nite call koro:</p>
 
       <button class="btn btn-money" id="money-btn">
         <span>📞 999</span>
         <span class="money-sub">(IMO / WhatsApp)</span>
       </button>
 
-      <p class="final-footer">Thanks for playing. It's just a joke. ❤️</p>
+      <p class="final-footer">Khela korar jonno dhonnobad. Eita shudhu moja chilo. ❤️</p>
     </div>
   </section>
 
