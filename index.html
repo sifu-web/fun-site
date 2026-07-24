@@ -48,8 +48,6 @@
     background-clip:text;
     color:transparent;
   }
-  .wave-emoji{ filter:none; }
-
   .glass{
     background:var(--glass);
     border:1px solid var(--glass-border);
@@ -70,7 +68,7 @@
     font-size:1.3rem;
     line-height:1.4;
   }
-  .verify-box{ display:flex; justify-content:center; }
+  .verify-box{ display:flex; flex-direction:column; align-items:center; gap:12px; }
   .btn{
     border:none;
     border-radius:14px;
@@ -86,7 +84,20 @@
     box-shadow:0 8px 20px rgba(255,93,143,0.35);
   }
   .btn-primary:hover{ transform:translateY(-2px); }
-  .btn-primary:active{ transform:translateY(0); }
+  .btn-primary:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
+
+  /* Loader styling */
+  .spinner {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: var(--accent);
+    animation: spin 0.8s linear infinite;
+    margin-top: 10px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   .result-box{
     margin-top:22px;
@@ -110,18 +121,11 @@
     animation:draw .5s .1s ease forwards;
   }
   @keyframes draw{ to{ stroke-dashoffset:0; } }
-  .result-text{ font-size:1.05rem; margin:0; color:var(--text); }
+  .result-text{ font-size:1.15rem; font-weight:bold; margin:0; color:var(--text); }
 
   .msg-card{
     position:relative;
     overflow:hidden;
-  }
-  .msg-card::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:linear-gradient(135deg, rgba(255,183,3,0.10), rgba(255,93,143,0.10));
-    pointer-events:none;
   }
   .msg-body{
     position:relative;
@@ -150,15 +154,16 @@
 
 <div class="page">
 
-  <h1 class="site-title">SiFUU <span class="wave-emoji">😀</span></h1>
+  <h1 class="site-title">SiFUU 😀</h1>
 
   <div class="card glass">
     <p class="eyebrow">Taratari check koro</p>
     <h2 class="page-heading">Verified Your manush Naki Kutta? 🙂</h2>
     <div class="verify-box">
       <button class="btn btn-primary" id="verify-btn">
-        <span class="btn-label">✅ Verified</span>
+        <span class="btn-label">✅ Verify</span>
       </button>
+      <div id="loading-spinner" class="spinner" hidden></div>
     </div>
     <div class="result-box" id="verify-result" hidden>
       <div class="check-circle">
@@ -167,7 +172,7 @@
           <path class="check-mark" fill="none" d="M14 27l7 7 16-16"/>
         </svg>
       </div>
-      <p class="result-text">Tumi Manush... Hoitto! 😂</p>
+      <p class="result-text">Tumi Manush Meybe? 🤡</p>
     </div>
   </div>
 
@@ -186,8 +191,21 @@
 </div>
 
 <script>
-  document.getElementById('verify-btn').addEventListener('click', function () {
-    document.getElementById('verify-result').hidden = false;
+  const verifyBtn = document.getElementById('verify-btn');
+  const spinner = document.getElementById('loading-spinner');
+  const resultBox = document.getElementById('verify-result');
+
+  verifyBtn.addEventListener('click', function () {
+    verifyBtn.disabled = true;
+    spinner.hidden = false;
+    resultBox.hidden = true;
+
+    // 5 second por result asbe
+    setTimeout(function() {
+      spinner.hidden = true;
+      resultBox.hidden = false;
+      verifyBtn.disabled = false;
+    }, 5000);
   });
 </script>
 
