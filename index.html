@@ -1,108 +1,195 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-<title>SiFUU 😀</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SiFUU</title>
+<style>
+  :root{
+    --bg-1:#1b1230;
+    --bg-2:#2c1a4d;
+    --accent:#ffb703;
+    --accent-2:#ff5d8f;
+    --glass:rgba(255,255,255,0.06);
+    --glass-border:rgba(255,255,255,0.14);
+    --text:#f4eefc;
+    --text-dim:#c9bfe0;
+    --success:#3ddc97;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Segoe UI', system-ui, sans-serif;
+    background:
+      radial-gradient(circle at 20% 15%, rgba(255,183,3,0.15), transparent 40%),
+      radial-gradient(circle at 80% 85%, rgba(255,93,143,0.18), transparent 45%),
+      linear-gradient(160deg, var(--bg-1), var(--bg-2));
+    color:var(--text);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 16px;
+  }
+  .page{
+    width:100%;
+    max-width:480px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+  }
+  .site-title{
+    text-align:center;
+    font-size:2.2rem;
+    margin:0 0 4px;
+    letter-spacing:1px;
+    background:linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .wave-emoji{ filter:none; }
+
+  .glass{
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    border-radius:20px;
+    padding:28px 24px;
+    backdrop-filter:blur(10px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+  }
+  .eyebrow{
+    text-transform:uppercase;
+    font-size:0.75rem;
+    letter-spacing:2px;
+    color:var(--text-dim);
+    margin:0 0 6px;
+  }
+  .page-heading{
+    margin:0 0 20px;
+    font-size:1.3rem;
+    line-height:1.4;
+  }
+  .verify-box{ display:flex; justify-content:center; }
+  .btn{
+    border:none;
+    border-radius:14px;
+    padding:14px 28px;
+    font-size:1rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary{
+    background:linear-gradient(90deg, var(--accent), var(--accent-2));
+    color:#20122f;
+    box-shadow:0 8px 20px rgba(255,93,143,0.35);
+  }
+  .btn-primary:hover{ transform:translateY(-2px); }
+  .btn-primary:active{ transform:translateY(0); }
+
+  .result-box{
+    margin-top:22px;
+    text-align:center;
+    animation:pop .35s ease;
+  }
+  @keyframes pop{
+    from{ opacity:0; transform:scale(.85); }
+    to{ opacity:1; transform:scale(1); }
+  }
+  .check-circle{ width:64px; margin:0 auto 12px; }
+  .check-svg{ width:64px; height:64px; }
+  .check-circle-bg{ stroke:var(--success); stroke-width:3; }
+  .check-mark{
+    stroke:var(--success);
+    stroke-width:4;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    stroke-dasharray:48;
+    stroke-dashoffset:48;
+    animation:draw .5s .1s ease forwards;
+  }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  .result-text{ font-size:1.05rem; margin:0; color:var(--text); }
+
+  .msg-card{
+    position:relative;
+    overflow:hidden;
+  }
+  .msg-card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg, rgba(255,183,3,0.10), rgba(255,93,143,0.10));
+    pointer-events:none;
+  }
+  .msg-body{
+    position:relative;
+    font-size:1.15rem;
+    line-height:1.9;
+    margin:0;
+  }
+  .highlight{
+    background:linear-gradient(120deg, var(--accent) 0%, var(--accent-2) 100%);
+    color:#1b1230;
+    padding:2px 8px;
+    border-radius:6px;
+    font-weight:700;
+  }
+  .signature{
+    display:block;
+    margin-top:22px;
+    text-align:right;
+    font-size:0.95rem;
+    color:var(--text-dim);
+    font-style:italic;
+  }
+</style>
 </head>
 <body>
 
-<canvas id="particles"></canvas>
+<div class="page">
 
-<div id="loading-screen">
-  <div class="loading-inner">
-    <div class="loading-emoji">😄</div>
-    <p class="loading-text">Eita shudhu moja korar jonno. Keu serious bhabe niben na. 😄</p>
-    <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  <h1 class="site-title">SiFUU <span class="wave-emoji">😀</span></h1>
+
+  <div class="card glass">
+    <p class="eyebrow">Taratari check koro</p>
+    <h2 class="page-heading">Verified Your manush Naki Kutta? 🙂</h2>
+    <div class="verify-box">
+      <button class="btn btn-primary" id="verify-btn">
+        <span class="btn-label">✅ Verified</span>
+      </button>
+    </div>
+    <div class="result-box" id="verify-result" hidden>
+      <div class="check-circle">
+        <svg viewBox="0 0 52 52" class="check-svg">
+          <circle class="check-circle-bg" cx="26" cy="26" r="24" fill="none"/>
+          <path class="check-mark" fill="none" d="M14 27l7 7 16-16"/>
+        </svg>
+      </div>
+      <p class="result-text">Tumi Manush... Hoitto! 😂</p>
+    </div>
   </div>
+
+  <div class="card glass msg-card">
+    <p class="eyebrow">Ekta kotha</p>
+    <p class="msg-body">
+      <span class="highlight">MEHEDI AMAR</span> Chele ei kotha ta sobai jane 😂<br><br>
+      <span class="highlight">Valo hoye jao</span> — eita amago shobar chawa. 🙂<br><br>
+      MEHEDI Chele amar tumi valo hoye jao<br>
+      Ar na holee......<br>
+      Sara jibon kharap e thakba 🤡🥴
+    </p>
+    <span class="signature">— Page From (Your Father SiFAT)</span>
+  </div>
+
 </div>
 
-<main id="app" hidden>
+<script>
+  document.getElementById('verify-btn').addEventListener('click', function () {
+    document.getElementById('verify-result').hidden = false;
+  });
+</script>
 
-  <section class="page active" id="page-1">
-    <h1 class="site-title">SiFUU <span class="wave-emoji">😀</span></h1>
-
-    <div class="card glass">
-      <p class="eyebrow">Taratari check koro</p>
-      <h2 class="page-heading">Verified Your manush Naki Kutta? 🙂</h2>
-
-      <div class="verify-box">
-        <button class="btn btn-primary" id="verify-btn">
-          <span class="btn-label">✅ Verify Koro</span>
-        </button>
-      </div>
-
-      <div class="result-box" id="verify-result" hidden>
-        <div class="check-circle">
-          <svg viewBox="0 0 52 52" class="check-svg">
-            <circle class="check-circle-bg" cx="26" cy="26" r="24" fill="none"/>
-            <path class="check-mark" fill="none" d="M14 27l7 7 16-16"/>
-          </svg>
-        </div>
-        <p class="result-text">Tumi Manush... Hoitto! 😂</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="page" id="page-2">
-    <div class="card glass">
-      <p class="eyebrow">Dhap 2 / 3</p>
-      <h2 class="page-heading">Proshno uttor dao ar Dhori hou! 💰</h2>
-      <p class="question-text">Tumar dada ki tumar dadi ke biye korechilo?</p>
-
-      <div class="options-row">
-        <button class="btn btn-option" data-answer="yes">Hae</button>
-        <button class="btn btn-option" data-answer="no">Na</button>
-      </div>
-
-      <div class="result-box small" id="q2-result" hidden>
-        <p class="result-text">Jani-i to... Uttar shobshomoy <strong>Na</strong>-i hobe. 😏</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="page" id="page-3">
-    <div class="card glass">
-      <p class="eyebrow">Dhap 3 / 3</p>
-      <h2 class="page-heading">Kuttar bachha ke kuttar bachha bolle ki pap hobe?</h2>
-
-      <div class="options-row trap-row" id="trap-row">
-        <button class="btn btn-option trap-btn" id="trap-btn-a" data-answer="no">Na, hobe na.</button>
-        <button class="btn btn-option trap-btn" id="trap-btn-b" data-answer="yes">Hae, hobe.</button>
-      </div>
-    </div>
-
-    <div class="popup-overlay" id="warning-popup" hidden>
-      <div class="popup glass">
-        <div class="popup-icon">⚠️</div>
-        <p class="popup-text">Shob thik-i chilo... Hothat gali dewa shuru korle keno? 😂</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="page" id="page-final">
-    <canvas id="confetti-canvas"></canvas>
-    <div class="card glass final-card">
-      <div class="trophy">🎉</div>
-      <h2 class="final-title">Ovinondon!</h2>
-      <p class="final-sub">Tumi ekhon Dhori lok! 💸</p>
-      <p class="call-instruction">Tumar taka nite call koro:</p>
-
-      <button class="btn btn-money" id="money-btn">
-        <span>📞 999</span>
-        <span class="money-sub">(IMO / WhatsApp)</span>
-      </button>
-
-      <p class="final-footer">Khela korar jonno dhonnobad. Eita shudhu moja chilo. ❤️</p>
-    </div>
-  </section>
-
-</main>
-
-<script src="script.js"></script>
 </body>
 </html>
