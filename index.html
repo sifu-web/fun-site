@@ -30,18 +30,17 @@
     align-items:center;
     justify-content:center;
     padding:32px 16px;
+    overflow-x:hidden;
   }
-  .page{
+  .container{
     width:100%;
     max-width:480px;
-    display:flex;
-    flex-direction:column;
-    gap:20px;
+    position:relative;
   }
   .site-title{
     text-align:center;
     font-size:2.2rem;
-    margin:0 0 4px;
+    margin:0 0 16px;
     letter-spacing:1px;
     background:linear-gradient(90deg, var(--accent), var(--accent-2));
     -webkit-background-clip:text;
@@ -56,6 +55,18 @@
     backdrop-filter:blur(10px);
     box-shadow:0 10px 30px rgba(0,0,0,0.35);
   }
+  
+  .page-step {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .page-step.hidden {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
   .eyebrow{
     text-transform:uppercase;
     font-size:0.75rem;
@@ -68,7 +79,7 @@
     font-size:1.3rem;
     line-height:1.4;
   }
-  .verify-box{ display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .verify-box{ display:flex; flex-direction:column; align-items:center; gap:16px; }
   .btn{
     border:none;
     border-radius:14px;
@@ -84,29 +95,31 @@
     box-shadow:0 8px 20px rgba(255,93,143,0.35);
   }
   .btn-primary:hover{ transform:translateY(-2px); }
-  .btn-primary:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
 
-  /* Loader styling */
+  .loading-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+  }
   .spinner {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    border: 3px solid rgba(255,255,255,0.3);
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(255,255,255,0.15);
     border-radius: 50%;
     border-top-color: var(--accent);
     animation: spin 0.8s linear infinite;
-    margin-top: 10px;
+  }
+  .loading-text {
+    font-size: 0.9rem;
+    color: var(--text-dim);
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .result-box{
-    margin-top:22px;
-    text-align:center;
-    animation:pop .35s ease;
-  }
-  @keyframes pop{
-    from{ opacity:0; transform:scale(.85); }
-    to{ opacity:1; transform:scale(1); }
+  .result-status {
+    text-align: center;
+    margin-bottom: 20px;
   }
   .check-circle{ width:64px; margin:0 auto 12px; }
   .check-svg{ width:64px; height:64px; }
@@ -121,15 +134,21 @@
     animation:draw .5s .1s ease forwards;
   }
   @keyframes draw{ to{ stroke-dashoffset:0; } }
-  .result-text{ font-size:1.15rem; font-weight:bold; margin:0; color:var(--text); }
+  .result-text{ font-size:1.2rem; font-weight:bold; margin:0; color:var(--text); }
 
   .msg-card{
     position:relative;
     overflow:hidden;
+    margin-top: 16px;
+    animation: slideUp 0.6s ease forwards;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   .msg-body{
     position:relative;
-    font-size:1.15rem;
+    font-size:1.1rem;
     line-height:1.9;
     margin:0;
   }
@@ -152,20 +171,26 @@
 </head>
 <body>
 
-<div class="page">
+<div class="container">
 
   <h1 class="site-title">SiFUU 😀</h1>
 
-  <div class="card glass">
+  <div class="card glass page-step" id="page-1">
     <p class="eyebrow">Taratari check koro</p>
     <h2 class="page-heading">Verified Your manush Naki Kutta? 🙂</h2>
     <div class="verify-box">
       <button class="btn btn-primary" id="verify-btn">
         <span class="btn-label">✅ Verify</span>
       </button>
-      <div id="loading-spinner" class="spinner" hidden></div>
+      <div id="loading-box" class="loading-box" style="display:none;">
+        <div class="spinner"></div>
+        <span class="loading-text">Checking verification...</span>
+      </div>
     </div>
-    <div class="result-box" id="verify-result" hidden>
+  </div>
+
+  <div class="page-step hidden" id="page-2">
+    <div class="card glass result-status">
       <div class="check-circle">
         <svg viewBox="0 0 52 52" class="check-svg">
           <circle class="check-circle-bg" cx="26" cy="26" r="24" fill="none"/>
@@ -174,37 +199,37 @@
       </div>
       <p class="result-text">Tumi Manush Meybe? 🤡</p>
     </div>
-  </div>
 
-  <div class="card glass msg-card">
-    <p class="eyebrow">Ekta kotha</p>
-    <p class="msg-body">
-      <span class="highlight">MEHEDI AMAR</span> Chele ei kotha ta sobai jane 😂<br><br>
-      <span class="highlight">Valo hoye jao</span> — eita amago shobar chawa. 🙂<br><br>
-      MEHEDI Chele amar tumi valo hoye jao<br>
-      Ar na holee......<br>
-      Sara jibon kharap e thakba 🤡🥴
-    </p>
-    <span class="signature">— Page From (Your Father SiFAT)</span>
+    <div class="card glass msg-card">
+      <p class="eyebrow">Ekta kotha</p>
+      <p class="msg-body">
+        <span class="highlight">MEHEDI AMAR</span> Chele ei kotha ta sobai jane 😂<br><br>
+        <span class="highlight">Valo hoye jao</span> — eita amago shobar chawa. 🙂<br><br>
+        MEHEDI Chele amar tumi valo hoye jao<br>
+        Ar na holee......<br>
+        Sara jibon kharap e thakba 🤡🥴
+      </p>
+      <span class="signature">— Page From (Your Father SiFAT)</span>
+    </div>
   </div>
 
 </div>
 
 <script>
   const verifyBtn = document.getElementById('verify-btn');
-  const spinner = document.getElementById('loading-spinner');
-  const resultBox = document.getElementById('verify-result');
+  const loadingBox = document.getElementById('loading-box');
+  const page1 = document.getElementById('page-1');
+  const page2 = document.getElementById('page-2');
 
   verifyBtn.addEventListener('click', function () {
-    verifyBtn.disabled = true;
-    spinner.hidden = false;
-    resultBox.hidden = true;
+    verifyBtn.style.display = 'none';
+    loadingBox.style.display = 'flex';
 
-    // 5 second por result asbe
     setTimeout(function() {
-      spinner.hidden = true;
-      resultBox.hidden = false;
-      verifyBtn.disabled = false;
+      page1.classList.add('hidden');
+      setTimeout(function() {
+        page2.classList.remove('hidden');
+      }, 300);
     }, 5000);
   });
 </script>
