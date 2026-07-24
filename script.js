@@ -1,247 +1,152 @@
-/* =========================================================
-   SiFUU — script.js
-   Handles: loading screen, page navigation, click sounds,
-   ripple effect, particle background, funny quiz logic,
-   trap-button dodge, warning popup, confetti finale.
-   ========================================================= */
+document.addEventListener("DOMContentLoaded", () => {
+  // --- PARTICLES BACKGROUND ---
+  const canvas = document.getElementById("particles");
+  if (canvas) {
+    const ctx = canvas.getContext("2d");
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
 
-document.addEventListener('DOMContentLoaded', () => {
-
-  /* ---------- Tiny click-sound synth (no external files) ---------- */
-  let audioCtx = null;
-  function playClick(freq = 620, duration = 0.09) {
-    try {
-      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-      osc.connect(gain).connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration);
-    } catch (e) { /* audio not available, fail silently */ }
-  }
-
-  /* ---------- Ripple + sound on every button ---------- */
-  function attachButtonFX(btn) {
-    btn.addEventListener('click', (e) => {
-      const rect = btn.getBoundingClientRect();
-      const ripple = document.createElement('span');
-      const size = Math.max(rect.width, rect.height);
-      ripple.className = 'ripple';
-      ripple.style.width = ripple.style.height = size + 'px';
-      ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
-      ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
-      btn.appendChild(ripple);
-      setTimeout(() => ripple.remove(), 620);
-      playClick();
+    window.addEventListener("resize", () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
     });
-  }
-  document.querySelectorAll('.btn').forEach(attachButtonFX);
 
-  /* ---------- Loading screen ---------- */
-  const loadingScreen = document.getElementById('loading-screen');
-  const app = document.getElementById('app');
+    const particleCount = Math.floor((width * height) / 10000);
+    const particles = Array.from({ length: particleCount }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      r: Math.random() * 2 + 1,
+      dx: (Math.random() - 0.5) * 0.5,
+      dy: (Math.random() - 0.5) * 0.5,
+      alpha: Math.random() * 0.5 + 0.2
+    }));
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => {
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+  }
+
+  // --- LOADING SCREEN ---
+  const loadingScreen = document.getElementById("loading-screen");
+  const app = document.getElementById("app");
+
   setTimeout(() => {
-    app.hidden = false;
-    setTimeout(() => loadingScreen.remove(), 650);
-  }, 3000);
+    if (loadingScreen) loadingScreen.style.display = "none";
+    if (app) app.hidden = false;
+  }, 2500);
 
-  /* ---------- Page navigation ---------- */
-  const pages = ['page-1', 'page-2', 'page-3', 'page-final'];
-  function goToPage(id) {
-    const current = document.querySelector('.page.active');
-    const next = document.getElementById(id);
-    if (!next || next === current) return;
-    if (current) {
-      current.classList.add('leaving');
-      current.classList.remove('active');
-      setTimeout(() => current.classList.remove('leaving'), 600);
+  // --- PAGE SWITCHING LOGIC ---
+  function goToPage(pageId) {
+    document.querySelectorAll(".page").forEach(page => {
+      page.classList.remove("active");
+    });
+    const nextPage = document.getElementById(pageId);
+    if (nextPage) {
+      nextPage.classList.add("active");
     }
-    next.classList.add('active');
-    if (id === 'page-final') launchConfetti();
   }
 
-  /* ---------- PAGE 1: Verification ---------- */
-  const verifyBtn = document.getElementById('verify-btn');
-  const verifyResult = document.getElementById('verify-result');
-  verifyBtn.addEventListener('click', () => {
-    verifyBtn.disabled = true;
-    verifyBtn.style.opacity = '0.6';
-    verifyResult.hidden = false;
-    setTimeout(() => goToPage('page-2'), 2000);
-  });
+  // --- PAGE 1: VERIFICATION ---
+  const verifyBtn = document.getElementById("verify-btn");
+  const verifyResult = document.getElementById("verify-result");
 
-  /* ---------- PAGE 2: Funny question (always "No") ---------- */
-  const q2Buttons = document.querySelectorAll('#page-2 .btn-option');
-  const q2Result = document.getElementById('q2-result');
-  q2Buttons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      q2Buttons.forEach((b) => (b.disabled = true));
-      q2Result.hidden = false;
-      setTimeout(() => goToPage('page-3'), 1800);
+  if (verifyBtn) {
+    verifyBtn.addEventListener("click", () => {
+      verifyBtn.style.display = "none";
+      if (verifyResult) verifyResult.hidden = false;
+
+      setTimeout(() => {
+        goToPage("page-2");
+      }, 2000);
+    });
+  }
+
+  // --- PAGE 2: FUNNY QUESTION ---
+  const q2Options = document.querySelectorAll("#page-2 .btn-option");
+  const q2Result = document.getElementById("q2-result");
+
+  q2Options.forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (q2Result) q2Result.hidden = false;
+
+      setTimeout(() => {
+        goToPage("page-3");
+      }, 2200);
     });
   });
 
-  /* ---------- PAGE 3: Trap question ---------- */
-  const trapRow = document.getElementById('trap-row');
-  const trapA = document.getElementById('trap-btn-a');
-  const trapB = document.getElementById('trap-btn-b');
-  const warningPopup = document.getElementById('warning-popup');
-  let dodgeCount = 0;
-  const maxDodges = 3;
+  // --- PAGE 3: TRAP BUTTONS & WARNING POPUP ---
+  const trapBtnA = document.getElementById("trap-btn-a");
+  const trapBtnB = document.getElementById("trap-btn-b");
+  const warningPopup = document.getElementById("warning-popup");
 
-  function dodgeAway(btn, otherBtn) {
-    const rowRect = trapRow.getBoundingClientRect();
-    const btnRect = btn.getBoundingClientRect();
-    const maxX = Math.max(0, rowRect.width - btnRect.width - 8);
-    const randomX = Math.random() * maxX;
-    const randomY = (Math.random() - 0.5) * 20;
-    btn.style.position = 'absolute';
-    btn.style.left = randomX + 'px';
-    btn.style.top = randomY + 'px';
-  }
+  function handleTrap() {
+    if (warningPopup) warningPopup.hidden = false;
 
-  function armDodge(btn, otherBtn) {
-    btn.addEventListener('pointerenter', () => {
-      if (dodgeCount >= maxDodges) return;
-      dodgeCount++;
-      dodgeAway(btn, otherBtn);
-    });
-  }
-  armDodge(trapA, trapB);
-  armDodge(trapB, trapA);
-
-  function triggerInsult(clickedBtn) {
-    [trapA, trapB].forEach((b) => (b.disabled = true));
-    clickedBtn.classList.add('insulted');
-    clickedBtn.textContent = 'Kuttar Baccha';
-    warningPopup.hidden = false;
     setTimeout(() => {
-      warningPopup.hidden = true;
-      goToPage('page-final');
-    }, 2000);
+      if (warningPopup) warningPopup.hidden = true;
+      goToPage("page-final");
+      triggerConfetti();
+    }, 2500);
   }
 
-  trapA.addEventListener('click', () => triggerInsult(trapA));
-  trapB.addEventListener('click', () => triggerInsult(trapB));
+  if (trapBtnA) trapBtnA.addEventListener("click", handleTrap);
+  if (trapBtnB) trapBtnB.addEventListener("click", handleTrap);
 
-  /* ---------- FINAL PAGE: money button just gives a little pulse ---------- */
-  const moneyBtn = document.getElementById('money-btn');
-  moneyBtn.addEventListener('click', () => {
-    moneyBtn.style.transform = 'scale(0.94)';
-    setTimeout(() => (moneyBtn.style.transform = ''), 180);
-  });
+  // --- FINAL PAGE: CONFETTI EFFECT ---
+  function triggerConfetti() {
+    const cCanvas = document.getElementById("confetti-canvas");
+    if (!cCanvas) return;
+    const cCtx = cCanvas.getContext("2d");
+    let cW = (cCanvas.width = window.innerWidth);
+    let cH = (cCanvas.height = window.innerHeight);
 
-  /* =========================================================
-     Particle background (ambient, full-page canvas)
-     ========================================================= */
-  const pCanvas = document.getElementById('particles');
-  const pCtx = pCanvas.getContext('2d');
-  let particles = [];
-  const PARTICLE_COUNT = 60;
-
-  function resizeParticleCanvas() {
-    pCanvas.width = window.innerWidth;
-    pCanvas.height = window.innerHeight;
-  }
-  function initParticles() {
-    particles = Array.from({ length: PARTICLE_COUNT }, () => ({
-      x: Math.random() * pCanvas.width,
-      y: Math.random() * pCanvas.height,
-      r: Math.random() * 1.6 + 0.4,
-      vx: (Math.random() - 0.5) * 0.15,
-      vy: (Math.random() - 0.5) * 0.15,
-      alpha: Math.random() * 0.5 + 0.15,
+    const pieces = Array.from({ length: 100 }, () => ({
+      x: Math.random() * cW,
+      y: Math.random() * cH - cH,
+      r: Math.random() * 6 + 4,
+      color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+      dy: Math.random() * 3 + 2,
+      dx: (Math.random() - 0.5) * 2
     }));
+
+    function drawConfetti() {
+      cCtx.clearRect(0, 0, cW, cH);
+      pieces.forEach(p => {
+        p.y += p.dy;
+        p.x += p.dx;
+        if (p.y > cH) p.y = -10;
+
+        cCtx.beginPath();
+        cCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        cCtx.fillStyle = p.color;
+        cCtx.fill();
+      });
+      requestAnimationFrame(drawConfetti);
+    }
+    drawConfetti();
   }
-  function drawParticles() {
-    pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
-    particles.forEach((p) => {
-      p.x += p.vx;
-      p.y += p.vy;
-      if (p.x < 0) p.x = pCanvas.width;
-      if (p.x > pCanvas.width) p.x = 0;
-      if (p.y < 0) p.y = pCanvas.height;
-      if (p.y > pCanvas.height) p.y = 0;
-      pCtx.beginPath();
-      pCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      pCtx.fillStyle = `rgba(127, 208, 255, ${p.alpha})`;
-      pCtx.fill();
+
+  // --- MONEY BUTTON CALL ACTION ---
+  const moneyBtn = document.getElementById("money-btn");
+  if (moneyBtn) {
+    moneyBtn.addEventListener("click", () => {
+      window.location.href = "tel:999";
     });
-    requestAnimationFrame(drawParticles);
   }
-  resizeParticleCanvas();
-  initParticles();
-  drawParticles();
-  window.addEventListener('resize', () => {
-    resizeParticleCanvas();
-    initParticles();
-  });
-
-  /* =========================================================
-     Confetti burst for the final page
-     ========================================================= */
-  const cCanvas = document.getElementById('confetti-canvas');
-  const cCtx = cCanvas.getContext('2d');
-  let confettiPieces = [];
-  let confettiRunning = false;
-  const CONFETTI_COLORS = ['#3ea6ff', '#7fd0ff', '#ffd166', '#ff9d3d', '#4ade80', '#ffffff'];
-
-  function resizeConfettiCanvas() {
-    const rect = cCanvas.parentElement.getBoundingClientRect();
-    cCanvas.width = window.innerWidth;
-    cCanvas.height = window.innerHeight;
-  }
-
-  function launchConfetti() {
-    resizeConfettiCanvas();
-    confettiPieces = Array.from({ length: 140 }, () => ({
-      x: Math.random() * cCanvas.width,
-      y: -20 - Math.random() * cCanvas.height * 0.5,
-      w: Math.random() * 7 + 4,
-      h: Math.random() * 12 + 6,
-      color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
-      vy: Math.random() * 2.5 + 2,
-      vx: (Math.random() - 0.5) * 2,
-      rot: Math.random() * 360,
-      vr: (Math.random() - 0.5) * 8,
-    }));
-    if (!confettiRunning) {
-      confettiRunning = true;
-      animateConfetti();
-    }
-    setTimeout(() => (confettiRunning = false), 5200);
-  }
-
-  function animateConfetti() {
-    cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
-    let stillFalling = false;
-    confettiPieces.forEach((p) => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.rot += p.vr;
-      if (p.y < cCanvas.height + 20) stillFalling = true;
-      cCtx.save();
-      cCtx.translate(p.x, p.y);
-      cCtx.rotate((p.rot * Math.PI) / 180);
-      cCtx.fillStyle = p.color;
-      cCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-      cCtx.restore();
-    });
-    if (confettiRunning || stillFalling) {
-      requestAnimationFrame(animateConfetti);
-    } else {
-      cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
-    }
-  }
-
-  window.addEventListener('resize', () => {
-    if (document.getElementById('page-final').classList.contains('active')) {
-      resizeConfettiCanvas();
-    }
-  });
-
 });
